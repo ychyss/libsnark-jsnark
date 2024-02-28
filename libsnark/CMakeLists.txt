@@ -677,6 +677,7 @@ target_link_libraries(
 )
 
 
+
 file(MAKE_DIRECTORY jsnark_interface)
 
 add_executable(
@@ -700,6 +701,20 @@ set_target_properties(run_ppzksnark
     LIBRARY_OUTPUT_DIRECTORY "jsnark_interface/"
     RUNTIME_OUTPUT_DIRECTORY "jsnark_interface/"
 )
+
+#-------
+add_executable(
+  zk_proof_systems_r1cs_h_se_ppzksnark_example
+  EXCLUDE_FROM_ALL
+
+  zk_proof_systems/ppzksnark/r1cs_h_se_ppzksnark/examples/basic.cpp
+)
+target_link_libraries(
+  zk_proof_systems_r1cs_h_se_ppzksnark_example
+
+  snark
+)
+#-------
 
 include(CTest)
 add_test(
