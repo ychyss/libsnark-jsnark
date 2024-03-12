@@ -64,7 +64,16 @@ int run_r1cs_h_se_ppzksnark_setup(size_t num_constraints, size_t input_size, std
     r1cs_h_se_ppzksnark_keypair<ppT> keypair = r1cs_h_se_ppzksnark_generator<ppT>(example.constraint_system);
     end = std::chrono::high_resolution_clock::now();
     elapsed = end - start; logFile<< "Gen Key Time: " << elapsed.count() << "s" << std::endl;
-    
+    printf("pk.alpha_g1=\n"); keypair.pk.alpha_g1.print();
+    printf("pk.beta_g1=\n"); keypair.pk.beta_g1.print();
+    printf("pk.beta_g2=\n"); keypair.pk.beta_g2.print();
+    printf("pk.delta_g1=\n"); keypair.pk.delta_g1.print();
+    printf("pk.delta_g2=\n"); keypair.pk.delta_g2.print();
+
+    printf("vk.alpha_g1_beta_g2=\n"); keypair.vk.alpha_g1_beta_g2.print();
+    printf("vk.gamma_g2=\n"); keypair.vk.gamma_g2.print();
+    printf("vk.delta_g1=\n"); keypair.vk.delta_g1.print();
+    printf("vk.delta_g2=\n"); keypair.vk.delta_g2.print();
     pkFile << keypair.pk;
     pkFile.flush();
     pkFile.close();
@@ -118,11 +127,21 @@ int run_r1cs_h_se_ppzksnark_prove(size_t num_constraints, size_t input_size,std:
     r1cs_h_se_ppzksnark_proving_key<ppT> pk;
     pkFile >> pk;
 
+    printf("pk.alpha_g1=\n"); pk.alpha_g1.print();
+    printf("pk.beta_g1=\n"); pk.beta_g1.print();
+    printf("pk.beta_g2=\n"); pk.beta_g2.print();
+    printf("pk.delta_g1=\n"); pk.delta_g1.print();
+    printf("pk.delta_g2=\n"); pk.delta_g2.print();
+
     // 生成证明
     start = std::chrono::high_resolution_clock::now();
     r1cs_h_se_ppzksnark_proof<ppT> proof = r1cs_h_se_ppzksnark_prover<ppT>(pk, example.primary_input, example.auxiliary_input);
     end = std::chrono::high_resolution_clock::now();
     elapsed = end - start; logFile<< "Prove Time: " << elapsed.count() << "s" << std::endl;
+
+    printf("proof.A:\n"); proof.g_A.print();
+    printf("proof.B:\n"); proof.g_B.print();
+    printf("proof.C:\n"); proof.g_C.print();
     proofFile << proof;
     proofFile.flush();
     proofFile.close();
@@ -172,6 +191,15 @@ int run_r1cs_h_se_ppzksnark_verify(size_t num_constraints, size_t input_size,std
     vkFile >> vk; 
     proofFile >> proof;
 
+    printf("vk.alpha_g1_beta_g2=\n"); vk.alpha_g1_beta_g2.print();
+    printf("vk.gamma_g2=\n"); vk.gamma_g2.print();
+    printf("vk.delta_g1=\n"); vk.delta_g1.print();
+    printf("vk.delta_g2=\n"); vk.delta_g2.print();
+
+    printf("proof.A:\n"); proof.g_A.print();
+    printf("proof.B:\n"); proof.g_B.print();
+    printf("proof.C:\n"); proof.g_C.print();
+
     // 验证
     start = std::chrono::high_resolution_clock::now();
     const bool ans = r1cs_h_se_ppzksnark_verifier_strong_IC<ppT>(vk, example.primary_input, proof);
@@ -212,13 +240,11 @@ bool run_r1cs_h_se_ppzksnark(size_t num_constraints, size_t input_size, std::str
         return 1;
     }
 
-
-
     logFile << "\n================================================================================\n";
     logFile << "Constraints Num:"<< num_constraints << std::endl;
     logFile << "Input Size:"<< input_size << std::endl;
     // 这个是生成r1cs约束的例子，不设计电路就用这个
-    r1cs_example<libff::Fr<ppT> > example = generate_r1cs_example_with_binary_input<libff::Fr<ppT> >(num_constraints, input_size);
+    r1cs_example<libff::Fr<ppT> > example1 = generate_r1cs_example_with_binary_input<libff::Fr<ppT> >(num_constraints, input_size);
 
     auto start = std::chrono::high_resolution_clock::now();
     auto end = std::chrono::high_resolution_clock::now();
@@ -228,9 +254,9 @@ bool run_r1cs_h_se_ppzksnark(size_t num_constraints, size_t input_size, std::str
     logFile << "================================================================================\n";
     // 密钥对
     start = std::chrono::high_resolution_clock::now();
-    r1cs_h_se_ppzksnark_keypair<ppT> keypair = r1cs_h_se_ppzksnark_generator<ppT>(example.constraint_system);
+    r1cs_h_se_ppzksnark_keypair<ppT> keypair = r1cs_h_se_ppzksnark_generator<ppT>(example1.constraint_system);
     end = std::chrono::high_resolution_clock::now();
-    elapsed = end - start; logFile<< "Gen Key Time: " << elapsed.count() << "s" << std::endl;
+    elapsed = end - start; logFile << "Gen Key Time: " << elapsed.count() << "s" << std::endl;
     // keypair.vk.delta_g1.print_coordinates();
     pkFile << keypair.pk;
     pkFile.close();
@@ -243,22 +269,24 @@ bool run_r1cs_h_se_ppzksnark(size_t num_constraints, size_t input_size, std::str
     end = std::chrono::high_resolution_clock::now();
     elapsed = end - start; logFile<< "Preprocess Time: " << elapsed.count() << "s" << std::endl;
     // 生成证明
+    r1cs_example<libff::Fr<ppT> > example2 = generate_r1cs_example_with_binary_input<libff::Fr<ppT> >(num_constraints, input_size);
     start = std::chrono::high_resolution_clock::now();
-    r1cs_h_se_ppzksnark_proof<ppT> proof = r1cs_h_se_ppzksnark_prover<ppT>(keypair.pk, example.primary_input, example.auxiliary_input);
+    r1cs_h_se_ppzksnark_proof<ppT> proof = r1cs_h_se_ppzksnark_prover<ppT>(keypair.pk, example2.primary_input, example2.auxiliary_input);
     end = std::chrono::high_resolution_clock::now();
     elapsed = end - start; logFile<< "Prove Time: " << elapsed.count() << "s" << std::endl;
     proofFile << proof;
     proofFile.close();
     // 验证
+    r1cs_example<libff::Fr<ppT> > example3 = generate_r1cs_example_with_binary_input<libff::Fr<ppT> >(num_constraints, input_size);
     start = std::chrono::high_resolution_clock::now();
-    const bool ans = r1cs_h_se_ppzksnark_verifier_strong_IC<ppT>(keypair.vk, example.primary_input, proof);
+    const bool ans = r1cs_h_se_ppzksnark_verifier_strong_IC<ppT>(keypair.vk, example3.primary_input, proof);
     printf("* The verification result is: %s\n", (ans ? "PASS" : "FAIL"));
     logFile << "The verification result is: " << (ans ? "PASS" : "FAIL") << std::endl;
     end = std::chrono::high_resolution_clock::now();
     elapsed = end - start; logFile<< "Verify Time: " << elapsed.count() << "s" << std::endl;
     // 
     start = std::chrono::high_resolution_clock::now();
-    const bool ans2 = r1cs_h_se_ppzksnark_online_verifier_strong_IC<ppT>(pvk, example.primary_input, proof);
+    const bool ans2 = r1cs_h_se_ppzksnark_online_verifier_strong_IC<ppT>(pvk, example3.primary_input, proof);
     assert(ans == ans2);
     end = std::chrono::high_resolution_clock::now();
     elapsed = end - start; logFile<< "Online Verify Time: " << elapsed.count() << "s" << std::endl;
@@ -319,12 +347,29 @@ bool createDirectoryIfNotExists(const std::string& path) {
 // }
 
 int main(int argc, char* argv[]) {
+
+    std::string mode = argv[1];
+    if (mode == "test") {
+        // 输出文件
+        std::string outputDir("./h-se");
+        // createDirectoryIfNotExists(outputDir);
+        int num_constraints = 10000;
+        int input_size = 10;
+        // default_r1cs_gg_ppzksnark_pp::init_public_params();
+        // test_r1cs_h_se_ppzksnark<default_r1cs_gg_ppzksnark_pp>(num_constraints, input_size, outputDir);
+        
+        run_r1cs_h_se_ppzksnark_setup<default_r1cs_gg_ppzksnark_pp>(num_constraints, input_size, outputDir);
+        run_r1cs_h_se_ppzksnark_prove<default_r1cs_gg_ppzksnark_pp>(num_constraints, input_size, outputDir);
+        run_r1cs_h_se_ppzksnark_verify<default_r1cs_gg_ppzksnark_pp>(num_constraints, input_size, outputDir);
+        return 0;
+    }
+
     if (argc < 5) {
         std::cerr << "Usage: " << argv[0] << " <setup|prove|verify> num_constraints input_size outputDir" << std::endl;
         return 1;
     }
 
-    std::string mode = argv[1];
+
     size_t num_constraints = std::stoul(argv[2]);
     size_t input_size = std::stoul(argv[3]);
     std::string outputDir = argv[4];

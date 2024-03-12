@@ -33,10 +33,8 @@ int main(int argc, char **argv) {
 
 	// Read the circuit, evaluate, and translate constraints
 	CircuitReader reader(argv[1 + inputStartIndex], argv[2 + inputStartIndex], pb);
-	r1cs_constraint_system<FieldT> cs = get_constraint_system_from_gadgetlib2(
-			*pb);
-	const r1cs_variable_assignment<FieldT> full_assignment =
-			get_variable_assignment_from_gadgetlib2(*pb);
+	r1cs_constraint_system<FieldT> cs = get_constraint_system_from_gadgetlib2(*pb);
+	const r1cs_variable_assignment<FieldT> full_assignment = get_variable_assignment_from_gadgetlib2(*pb);
 	cs.primary_input_size = reader.getNumInputs() + reader.getNumOutputs();
 	cs.auxiliary_input_size = full_assignment.size() - cs.num_inputs();
 

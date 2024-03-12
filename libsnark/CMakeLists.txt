@@ -694,8 +694,29 @@ target_link_libraries(
 
   snark
 )
-
 set_target_properties(run_ppzksnark
+    PROPERTIES
+    ARCHIVE_OUTPUT_DIRECTORY "jsnark_interface/"
+    LIBRARY_OUTPUT_DIRECTORY "jsnark_interface/"
+    RUNTIME_OUTPUT_DIRECTORY "jsnark_interface/"
+)
+
+# 添加我自己的运行
+add_executable(
+  run_h_se_snark
+
+  jsnark_interface/Util.hpp
+  jsnark_interface/Util.cpp
+  jsnark_interface/CircuitReader.hpp
+  jsnark_interface/CircuitReader.cpp
+  jsnark_interface/run_hse_snark.cpp
+)
+target_link_libraries(
+  run_h_se_snark
+
+  snark
+)
+set_target_properties(run_h_se_snark
     PROPERTIES
     ARCHIVE_OUTPUT_DIRECTORY "jsnark_interface/"
     LIBRARY_OUTPUT_DIRECTORY "jsnark_interface/"
