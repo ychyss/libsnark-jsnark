@@ -14,3 +14,6 @@
 	path = depends/libfqfft
 	url = https://github.com/ychyss/libfqfft.git
 	branch = master
+[submodule "depends/libff"]
+	path = depends/libff
+	url = https://github.com/ychyss/libff.git
