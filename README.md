@@ -2,7 +2,7 @@
 ## 命令
 
 `git submodule init && git submodule update`  
-`mkdir build && cd build && cmake .`  
+`mkdir build && cd build && cmake ..`  
 
 
 ---
