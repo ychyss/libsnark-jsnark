@@ -14,6 +14,4 @@
 [submodule "depends/libff"]
 	path = depends/libff
 	url = https://github.com/ychyss/libff.git
-[submodule "depends/libfqfft"]
-	path = depends/libfqfft
-	url = https://github.com/scipr-lab/libfqfft.git
+
