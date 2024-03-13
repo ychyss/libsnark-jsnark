@@ -4,6 +4,13 @@
 `git submodule init && git submodule update`  
 `mkdir build && cd build && cmake ..`  
 
+删除子模块
+```
+git submodule deinit 子模块目录
+vi .gitmodules 删除相关条目
+rm -rf .git/modules/子模块目录
+git rm --cached 子模块名称
+```
 
 ---
 
