@@ -1,4 +1,11 @@
 这是经过jsnark改造的库
+## 命令
+
+`git submodule init && git submodule update`  
+`mkdir build && cd build && cmake .`  
+
+
+---
 
 libsnark: a C++ library for zkSNARK proofs
 ================================================================================
