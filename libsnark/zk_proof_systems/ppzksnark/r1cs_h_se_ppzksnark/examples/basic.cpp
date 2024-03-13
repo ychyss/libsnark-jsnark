@@ -4,7 +4,7 @@
 #include <libsnark/common/default_types/r1cs_gg_ppzksnark_pp.hpp>
 #include <libsnark/zk_proof_systems/ppzksnark/r1cs_h_se_ppzksnark/r1cs_h_se_ppzksnark.hpp>
 
-#include <libff/algebra/fields/bigint.hpp>
+#include <libff/algebra/field_utils/bigint.hpp>
 
 #include <vector>
 #include <string>
