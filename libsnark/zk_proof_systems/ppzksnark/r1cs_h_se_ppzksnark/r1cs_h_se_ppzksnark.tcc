@@ -57,9 +57,9 @@ template<typename ppT>
 std::string g1Point2String(libff::G1<ppT> point) {
     // 现这样写，用其他曲线再说
     std::vector<std::string> strings;
-    strings.push_back(point.coord[0].toString(10));
-    strings.push_back(point.coord[1].toString(10));
-    strings.push_back(point.coord[2].toString(10));
+    strings.push_back(point.X.toString(10));
+    strings.push_back(point.Y.toString(10));
+    strings.push_back(point.Z.toString(10));
     // std::cout<< "G1 point coord:\n" << std::endl;
     // point.print_coordinates();
     return array2String(strings);
@@ -68,9 +68,9 @@ template<typename ppT>
 std::string g2Point2String(libff::G2<ppT> point) {
     // 现这样写，用其他曲线再说
     std::vector<std::string> strings;
-    strings.push_back(point.coord[0].toString(10));
-    strings.push_back(point.coord[1].toString(10));
-    strings.push_back(point.coord[2].toString(10));
+    strings.push_back(point.X.toString(10));
+    strings.push_back(point.Y.toString(10));
+    strings.push_back(point.Z.toString(10));
     // std::cout<< "G2 point coord:\n"<< std::endl;
     // point.print_coordinates();
 
@@ -417,7 +417,7 @@ r1cs_h_se_ppzksnark_keypair<ppT> r1cs_h_se_ppzksnark_generator(const r1cs_h_se_p
     libff::enter_block("Generating G1 MSM window table");
     const libff::G1<ppT> g1_generator = libff::G1<ppT>::random_element();
     const size_t g1_scalar_count = non_zero_At + non_zero_Bt + qap.num_variables();
-    const size_t g1_scalar_size = libff::Fr<ppT>::size_in_bits();
+    const size_t g1_scalar_size = libff::Fr<ppT>::ceil_size_in_bits();
     const size_t g1_window_size = libff::get_exp_window_size<libff::G1<ppT> >(g1_scalar_count);
 
     libff::print_indent(); printf("* G1 window: %zu\n", g1_window_size);
@@ -427,7 +427,7 @@ r1cs_h_se_ppzksnark_keypair<ppT> r1cs_h_se_ppzksnark_generator(const r1cs_h_se_p
     libff::enter_block("Generating G2 MSM window table");
     const libff::G2<ppT> G2_gen = libff::G2<ppT>::random_element();
     const size_t g2_scalar_count = non_zero_Bt;
-    const size_t g2_scalar_size = libff::Fr<ppT>::size_in_bits();
+    const size_t g2_scalar_size = libff::Fr<ppT>::ceil_size_in_bits();
     size_t g2_window_size = libff::get_exp_window_size<libff::G2<ppT> >(g2_scalar_count);
 
     libff::print_indent(); printf("* G2 window: %zu\n", g2_window_size);
@@ -452,7 +452,7 @@ r1cs_h_se_ppzksnark_keypair<ppT> r1cs_h_se_ppzksnark_generator(const r1cs_h_se_p
     libff::leave_block("Compute the A-query", false);
 
     libff::enter_block("Compute the B-query", false);
-    knowledge_commitment_vector<libff::G2<ppT>, libff::G1<ppT> > B_query = kc_batch_exp(libff::Fr<ppT>::size_in_bits(), g2_window_size, g1_window_size, g2_table, g1_table, libff::Fr<ppT>::one(), libff::Fr<ppT>::one(), Bt, chunks);
+    knowledge_commitment_vector<libff::G2<ppT>, libff::G1<ppT> > B_query = kc_batch_exp(libff::Fr<ppT>::ceil_size_in_bits(), g2_window_size, g1_window_size, g2_table, g1_table, libff::Fr<ppT>::one(), libff::Fr<ppT>::one(), Bt, chunks);
     // NOTE: if USE_MIXED_ADDITION is defined,
     // kc_batch_exp will convert its output to special form internally
     libff::leave_block("Compute the B-query", false);
